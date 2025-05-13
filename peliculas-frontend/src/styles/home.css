@@ -1,0 +1,65 @@
+.jumbotron {
+    background: linear-gradient(to right, var(--dark), var(--darker));
+    border-radius: 8px;
+    padding: 3rem 2rem;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    border-left: 4px solid var(--primary);
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .jumbotron::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 40%;
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+    z-index: 0;
+    mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0));
+    -webkit-mask-image: linear-gradient(to left, rgba(0,0,0,1), rgba(0,0,0,0));
+  }
+  
+  .display-4 {
+    font-size: 2.5rem;
+    font-weight: 300;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    color: var(--primary);
+    text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.5);
+    position: relative;
+    z-index: 1;
+  }
+  
+  .lead {
+    font-size: 1.25rem;
+    font-weight: 300;
+    color: var(--light);
+    position: relative;
+    z-index: 1;
+    max-width: 60%;
+  }
+  
+  @media (max-width: 768px) {
+    .jumbotron {
+      padding: 2rem 1.5rem;
+    }
+    
+    .display-4 {
+      font-size: 2rem;
+    }
+    
+    .lead {
+      font-size: 1.1rem;
+      max-width: 100%;
+    }
+    
+    .jumbotron::after {
+      width: 100%;
+      opacity: 0.1;
+    }
+  }
