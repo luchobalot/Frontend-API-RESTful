@@ -4,49 +4,49 @@ import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as Yup from 'yup';
 import { categoriaService } from '../../services/api';
 
-const CategoriasForm = () => {
+const FormularioCategorias = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const navegar = useNavigate();
   const [categoria, setCategoria] = useState(null);
-  const [loading, setLoading] = useState(id ? true : false);
+  const [cargando, setCargando] = useState(!!id);
   const [error, setError] = useState(null);
 
   useEffect(() => {
     if (id) {
-      const fetchCategoria = async () => {
+      const obtenerCategoria = async () => {
         try {
-          const response = await categoriaService.getById(id);
-          setCategoria(response.data);
-          setLoading(false);
+          const respuesta = await categoriaService.getById(id);
+          setCategoria(respuesta.data);
+          setCargando(false);
         } catch (err) {
           setError('Error al cargar la categoría');
-          setLoading(false);
+          setCargando(false);
           console.error(err);
         }
       };
 
-      fetchCategoria();
+      obtenerCategoria();
     }
   }, [id]);
 
-  const initialValues = {
+  const valoresIniciales = {
     nombre: categoria?.nombre || '',
   };
 
-  const validationSchema = Yup.object({
+  const esquemaValidacion = Yup.object({
     nombre: Yup.string()
       .required('El nombre es obligatorio')
       .max(100, 'El nombre no puede tener más de 100 caracteres'),
   });
 
-  const handleSubmit = async (values, { setSubmitting }) => {
+  const enviarFormulario = async (valores, { setSubmitting }) => {
     try {
       if (id) {
-        await categoriaService.update(id, { ...values, id: parseInt(id) });
+        await categoriaService.update(id, { ...valores, id: parseInt(id) });
       } else {
-        await categoriaService.create(values);
+        await categoriaService.create(valores);
       }
-      navigate('/categorias');
+      navegar('/categorias');
     } catch (err) {
       setError('Error al guardar la categoría');
       console.error(err);
@@ -55,50 +55,50 @@ const CategoriasForm = () => {
     }
   };
 
-  if (loading) return <div>Cargando...</div>;
+  if (cargando) return <div>Cargando...</div>;
 
   return (
-    <div>
+    <div className="contenedor-formulario">
       <h2>{id ? 'Editar' : 'Nueva'} Categoría</h2>
-      {error && <div className="alert alert-danger">{error}</div>}
+      {error && <div className="alerta-error">{error}</div>}
 
       <Formik
-        initialValues={initialValues}
-        validationSchema={validationSchema}
-        onSubmit={handleSubmit}
+        initialValues={valoresIniciales}
+        validationSchema={esquemaValidacion}
+        onSubmit={enviarFormulario}
         enableReinitialize
       >
         {({ isSubmitting }) => (
-          <Form>
-            <div className="mb-3">
-              <label htmlFor="nombre" className="form-label">
+          <Form className="formulario-categoria">
+            <div className="grupo-formulario">
+              <label htmlFor="nombre" className="etiqueta-formulario">
                 Nombre
               </label>
               <Field
                 type="text"
                 id="nombre"
                 name="nombre"
-                className="form-control"
+                className="campo-texto"
               />
               <ErrorMessage
                 name="nombre"
                 component="div"
-                className="text-danger"
+                className="mensaje-error"
               />
             </div>
 
-            <div className="d-flex gap-2">
+            <div className="acciones-formulario">
               <button
                 type="submit"
-                className="btn btn-primary"
+                className="boton-primario"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? 'Guardando...' : 'Guardar'}
               </button>
               <button
                 type="button"
-                className="btn btn-secondary"
-                onClick={() => navigate('/categorias')}
+                className="boton-secundario"
+                onClick={() => navegar('/categorias')}
               >
                 Cancelar
               </button>
@@ -110,4 +110,4 @@ const CategoriasForm = () => {
   );
 };
 
-export default CategoriasForm;
+export default FormularioCategorias;

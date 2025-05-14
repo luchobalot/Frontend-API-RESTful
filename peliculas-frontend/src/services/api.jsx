@@ -1,81 +1,74 @@
-// src/services/api.jsx (Corregido)
 import axios from 'axios';
 
-// Crear una instancia de axios con un tiempo de espera y manejo de errores
+// Crear una instancia de axios con configuración básica
 const api = axios.create({
   baseURL: 'https://localhost:7220/api',
   headers: {
     'Content-Type': 'application/json',
   },
-  timeout: 10000, // 10 segundos de timeout
+  timeout: 10000, // 10 segundos de espera
 });
 
-// Interceptor para manejar errores globalmente
+// Interceptor global para manejar errores de la API
 api.interceptors.response.use(
-  response => response,
+  respuesta => respuesta,
   error => {
-    console.error('Error en la solicitud API:', error);
-    
-    // Si el error es por tiempo de espera
+    console.error('Error en la solicitud a la API:', error);
+
     if (error.code === 'ECONNABORTED') {
-      console.error('La solicitud tomó demasiado tiempo en responder');
+      console.error('La solicitud tardó demasiado en responder');
     }
-    
-    // Si no hay respuesta del servidor
+
     if (!error.response) {
-      console.error('No se pudo conectar con el servidor. Verifique que el backend esté en ejecución.');
+      console.error('No se pudo conectar con el servidor. Verifique que el backend esté en funcionamiento.');
     }
-    
+
     return Promise.reject(error);
   }
 );
 
 // Servicios para Categorías
-export const categoriaService = {
-  getAll: () => api.get('/Categorias').catch(handleApiError),
+export const servicioCategorias = {
+  obtenerTodas: () => api.get('/Categorias').catch(manejarErrorApi),
 
-  getById: (id) => api.get(`/Categorias/${id}`).catch(handleApiError),
+  obtenerPorId: (id) => api.get(`/Categorias/${id}`).catch(manejarErrorApi),
 
-  create: (categoria) => api.post('/Categorias', categoria).catch(handleApiError),
+  crear: (categoria) => api.post('/Categorias', categoria).catch(manejarErrorApi),
 
-  update: (id, categoria) => api.patch(`/Categorias/${id}`, categoria).catch(handleApiError),
-  
-  delete: (id) => api.delete(`/Categorias/${id}`).catch(handleApiError),
+  actualizar: (id, categoria) => api.patch(`/Categorias/${id}`, categoria).catch(manejarErrorApi),
+
+  eliminar: (id) => api.delete(`/Categorias/${id}`).catch(manejarErrorApi),
 };
 
 // Servicios para Películas
-export const peliculaService = {
-  getAll: () => api.get('/Peliculas').catch(handleApiError),
+export const servicioPeliculas = {
+  obtenerTodas: () => api.get('/Peliculas').catch(manejarErrorApi),
 
-  getById: (id) => api.get(`/Peliculas/${id}`).catch(handleApiError),
-  
-  buscar: (nombre) => api.get(`/Peliculas/Buscar?nombre=${encodeURIComponent(nombre)}`).catch(handleApiError),
+  obtenerPorId: (id) => api.get(`/Peliculas/${id}`).catch(manejarErrorApi),
+
+  buscarPorNombre: (nombre) => api.get(`/Peliculas/Buscar?nombre=${encodeURIComponent(nombre)}`).catch(manejarErrorApi),
 };
 
-// Función auxiliar para manejar errores de API
-function handleApiError(error) {
-  // Para depuración
-  console.error('Error específico de API:', error);
-  
-  // Si es un error de red, es probable que el backend no esté funcionando
+// Función auxiliar para manejar errores de la API
+function manejarErrorApi(error) {
+  console.error('Error específico de la API:', error);
+
   if (error.message === 'Network Error') {
     return Promise.reject({
-      message: 'No se pudo conectar con el servidor. Verifique que el backend esté en ejecución.'
+      mensaje: 'No se pudo conectar con el servidor. Verifique que el backend esté en funcionamiento.',
     });
   }
-  
-  // Si tenemos una respuesta del servidor con un mensaje de error
+
   if (error.response && error.response.data) {
     return Promise.reject({
-      status: error.response.status,
-      message: error.response.data.message || 'Error en el servidor',
-      data: error.response.data
+      estado: error.response.status,
+      mensaje: error.response.data.message || 'Error en el servidor',
+      datos: error.response.data,
     });
   }
-  
-  // Cualquier otro tipo de error
+
   return Promise.reject({
-    message: 'Error inesperado al comunicarse con el servidor'
+    mensaje: 'Error inesperado al comunicarse con el servidor',
   });
 }
 

@@ -4,6 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './styles/global.css';
 import './styles/navbar.css';
 import './styles/home.css';
+import './styles/modal.css';
 import './styles/peliculas.css'; // Importación global de los estilos de películas
 import Navbar from './components/Navbar';
 import Home from './pages/Home';

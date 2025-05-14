@@ -3,28 +3,28 @@ import { Link } from 'react-router-dom';
 import { categoriaService } from '../../services/api';
 import { FaEdit, FaTrash } from 'react-icons/fa';
 
-const CategoriasList = () => {
+const ListaCategorias = () => {
   const [categorias, setCategorias] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const fetchCategorias = async () => {
+    const obtenerCategorias = async () => {
       try {
-        const response = await categoriaService.getAll();
-        setCategorias(response.data);
-        setLoading(false);
+        const respuesta = await categoriaService.getAll();
+        setCategorias(respuesta.data);
+        setCargando(false);
       } catch (err) {
         setError('Error al cargar las categorías.');
-        setLoading(false);
+        setCargando(false);
         console.error(err);
       }
     };
 
-    fetchCategorias();
+    obtenerCategorias();
   }, []);
 
-  const handleDelete = async (id) => {
+  const eliminarCategoria = async (id) => {
     if (window.confirm('¿Estás seguro de eliminar esta categoría?')) {
       try {
         await categoriaService.delete(id);
@@ -36,19 +36,19 @@ const CategoriasList = () => {
     }
   };
 
-  if (loading) return <div>Cargando...</div>;
-  if (error) return <div className="alert alert-danger">{error}</div>;
+  if (cargando) return <div>Cargando...</div>;
+  if (error) return <div className="alerta-error">{error}</div>;
 
   return (
-    <div>
-      <div className="d-flex justify-content-between align-items-center mb-4">
+    <div className="contenedor-categorias">
+      <div className="encabezado-categorias">
         <h2>Categorías</h2>
-        <Link to="/categorias/new" className="btn btn-primary">
+        <Link to="/categorias/nueva" className="boton-nueva-categoria">
           Nueva Categoría
         </Link>
       </div>
 
-      <table className="table table-striped">
+      <table className="tabla-categorias">
         <thead>
           <tr>
             <th>ID</th>
@@ -60,7 +60,7 @@ const CategoriasList = () => {
         <tbody>
           {categorias.length === 0 ? (
             <tr>
-              <td colSpan="4" className="text-center">
+              <td colSpan="4" className="texto-centro">
                 No hay categorías disponibles
               </td>
             </tr>
@@ -71,16 +71,10 @@ const CategoriasList = () => {
                 <td>{categoria.nombre}</td>
                 <td>{new Date(categoria.fechaCreacion).toLocaleDateString()}</td>
                 <td>
-                  <Link
-                    to={`/categorias/${categoria.id}`}
-                    className="btn btn-sm btn-warning me-2"
-                  >
+                  <Link to={`/categorias/${categoria.id}`} className="boton-editar">
                     <FaEdit /> Editar
                   </Link>
-                  <button
-                    onClick={() => handleDelete(categoria.id)}
-                    className="btn btn-sm btn-danger"
-                  >
+                  <button onClick={() => eliminarCategoria(categoria.id)} className="boton-eliminar">
                     <FaTrash /> Eliminar
                   </button>
                 </td>
@@ -93,4 +87,4 @@ const CategoriasList = () => {
   );
 };
 
-export default CategoriasList;
+export default ListaCategorias;

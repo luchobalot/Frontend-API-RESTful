@@ -1,10 +1,9 @@
-// src/components/peliculas/PeliculasCard.jsx (Corregido)
 import { useState } from 'react';
-import PeliculasModal from './PeliculasModal';
+import PeliculaModal from './PeliculaModal';
 import '../../styles/peliculas.css';
 
-const PeliculaCard = ({ pelicula }) => {
-  const [showModal, setShowModal] = useState(false);
+const TarjetaPelicula = ({ pelicula }) => {
+  const [mostrarModal, setMostrarModal] = useState(false);
 
   // Validación de la estructura del objeto pelicula
   if (!pelicula) {
@@ -19,12 +18,12 @@ const PeliculaCard = ({ pelicula }) => {
     );
   }
 
-  const handleImageClick = () => {
-    setShowModal(true);
+  const manejarClicImagen = () => {
+    setMostrarModal(true);
   };
 
   // Función para obtener el año de forma segura
-  const getYear = () => {
+  const obtenerAnio = () => {
     try {
       if (pelicula.fechaEstreno) {
         return new Date(pelicula.fechaEstreno).getFullYear();
@@ -41,7 +40,7 @@ const PeliculaCard = ({ pelicula }) => {
       <div className="card h-100 shadow-sm">
         <div 
           className="image-container position-relative" 
-          onClick={handleImageClick}
+          onClick={manejarClicImagen}
           style={{ cursor: 'pointer' }}
         >
           {pelicula.rutaImagen ? (
@@ -68,7 +67,7 @@ const PeliculaCard = ({ pelicula }) => {
           <h5 className="card-title">{pelicula.nombre || 'Sin título'}</h5>
           <div className="d-flex justify-content-between">
             <span className="text-muted">
-              {getYear()}
+              {obtenerAnio()}
             </span>
             <span className="badge bg-secondary">
               {(pelicula.duracion || '?')} min
@@ -77,14 +76,14 @@ const PeliculaCard = ({ pelicula }) => {
         </div>
       </div>
 
-      {showModal && (
+      {mostrarModal && (
         <PeliculaModal
           pelicula={pelicula}
-          onClose={() => setShowModal(false)}
+          onClose={() => setMostrarModal(false)}
         />
       )}
     </>
   );
 };
 
-export default PeliculaCard;
+export default TarjetaPelicula;

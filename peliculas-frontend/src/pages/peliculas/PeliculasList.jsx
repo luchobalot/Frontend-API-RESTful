@@ -1,119 +1,112 @@
-// src/pages/peliculas/PeliculasList.jsx (Corregido)
 import { useState, useEffect } from 'react';
 import { peliculaService } from '../../services/api';
 import PeliculasCard from "../../components/peliculas/PeliculasCard";
 import '../../styles/peliculas.css';
 
-const PeliculasList = () => {
+const ListaPeliculas = () => {
   const [peliculas, setPeliculas] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
   const [busqueda, setBusqueda] = useState('');
 
   useEffect(() => {
-    const fetchPeliculas = async () => {
+    const obtenerPeliculas = async () => {
       try {
-        setLoading(true);
-        const response = await peliculaService.getAll();
+        setCargando(true);
+        const respuesta = await peliculaService.getAll();
         
-        // Verificar si response.data existe y es un array
-        if (response && response.data && Array.isArray(response.data)) {
-          console.log('Películas recibidas:', response.data); // Para depuración
-          setPeliculas(response.data);
+        if (respuesta && respuesta.data && Array.isArray(respuesta.data)) {
+          console.log('Películas recibidas:', respuesta.data);
+          setPeliculas(respuesta.data);
           setError(null);
         } else {
-          console.error('Formato de respuesta incorrecto:', response);
+          console.error('Formato de respuesta incorrecto:', respuesta);
           setError('El formato de respuesta de la API no es válido');
         }
       } catch (err) {
         console.error('Error al cargar películas:', err);
         setError('No se pudieron cargar las películas. Por favor, intenta más tarde.');
       } finally {
-        setLoading(false);
+        setCargando(false);
       }
     };
 
-    fetchPeliculas();
+    obtenerPeliculas();
   }, []);
 
-  const handleBuscar = async (e) => {
+  const buscarPeliculas = async (e) => {
     e.preventDefault();
     
     try {
-      setLoading(true);
-      let response;
+      setCargando(true);
+      let respuesta;
       
       if (!busqueda.trim()) {
-        // Si la búsqueda está vacía, cargar todas las películas
-        response = await peliculaService.getAll();
+        respuesta = await peliculaService.getAll();
       } else {
-        response = await peliculaService.buscar(busqueda);
+        respuesta = await peliculaService.buscar(busqueda);
       }
       
-      // Verificar si response.data existe y es un array
-      if (response && response.data && Array.isArray(response.data)) {
-        console.log('Películas encontradas:', response.data); // Para depuración
-        setPeliculas(response.data);
+      if (respuesta && respuesta.data && Array.isArray(respuesta.data)) {
+        console.log('Películas encontradas:', respuesta.data);
+        setPeliculas(respuesta.data);
         setError(null);
       } else {
-        console.error('Formato de respuesta incorrecto:', response);
+        console.error('Formato de respuesta incorrecto:', respuesta);
         setError('El formato de respuesta de la API no es válido');
       }
     } catch (err) {
       console.error('Error al buscar películas:', err);
       setError('Error al buscar películas');
     } finally {
-      setLoading(false);
+      setCargando(false);
     }
   };
 
-  if (loading) {
+  if (cargando) {
     return (
-      <div className="spinner-container text-center my-5">
-        <div className="spinner-border" role="status">
-          <span className="visually-hidden">Cargando...</span>
-        </div>
-        <p className="mt-2">Cargando películas...</p>
+      <div className="contenedor-cargando">
+        <div className="animacion-cargando"></div>
+        <p className="texto-cargando">Cargando películas...</p>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="alert alert-danger" role="alert">
+      <div className="alerta-error">
         {error}
       </div>
     );
   }
 
   return (
-    <div className="peliculas-container my-4">
-      <h2 className="peliculas-title mb-4">Películas</h2>
+    <div className="contenedor-peliculas">
+      <h2 className="titulo-peliculas">Películas</h2>
 
-      {/* Buscador */}
-      <form onSubmit={handleBuscar} className="search-form mb-4">
-        <div className="input-group">
+      <form onSubmit={buscarPeliculas} className="formulario-busqueda">
+        <div className="grupo-busqueda">
           <input
             type="text"
-            className="form-control"
+            className="campo-busqueda"
             placeholder="Buscar películas..."
             value={busqueda}
             onChange={(e) => setBusqueda(e.target.value)}
           />
-          <button className="btn btn-primary" type="submit">
+          <button className="boton-buscar" type="submit">
             Buscar
           </button>
         </div>
       </form>
 
       {peliculas.length === 0 ? (
-        <div className="alert alert-info">
-          No se encontraron películas. 
+        <div className="alerta-info">
+          No se encontraron películas.
         </div>
       ) : (
-        <div className="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+        <div className="grid-peliculas">
           {peliculas.map((pelicula) => (
-            <div className="col" key={pelicula.id || index}>
+            <div className="tarjeta-pelicula" key={pelicula.id}>
               <PeliculasCard pelicula={pelicula} />
             </div>
           ))}
@@ -123,4 +116,4 @@ const PeliculasList = () => {
   );
 };
 
-export default PeliculasList;
+export default ListaPeliculas;

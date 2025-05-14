@@ -1,11 +1,10 @@
-// src/components/peliculas/PeliculaModal.jsx (Corregido)
 import ReactDOM from 'react-dom';
 import '../../styles/modal.css';
 
 const clasificaciones = {
   0: 'Siete',
   1: 'Trece',
-  2: 'Dieciseis',
+  2: 'Dieciséis',
   3: 'Dieciocho'
 };
 
@@ -17,10 +16,10 @@ const PeliculaModal = ({ pelicula, onClose }) => {
   }
   
   // Función para formatear fecha de forma segura
-  const formatDate = (dateString) => {
+  const formatearFecha = (fechaCadena) => {
     try {
-      if (!dateString) return 'No disponible';
-      return new Date(dateString).toLocaleDateString();
+      if (!fechaCadena) return 'No disponible';
+      return new Date(fechaCadena).toLocaleDateString();
     } catch (error) {
       console.error('Error al formatear fecha:', error);
       return 'Fecha inválida';
@@ -37,7 +36,7 @@ const PeliculaModal = ({ pelicula, onClose }) => {
               type="button"
               className="btn-close"
               onClick={onClose}
-              aria-label="Close"
+              aria-label="Cerrar"
             ></button>
           </div>
           <div className="modal-body">
@@ -72,7 +71,7 @@ const PeliculaModal = ({ pelicula, onClose }) => {
                     <strong>Año de estreno:</strong>
                   </div>
                   <div className="col-6">
-                    {formatDate(pelicula.fechaEstreno)}
+                    {formatearFecha(pelicula.fechaEstreno)}
                   </div>
                 </div>
                 
@@ -90,8 +89,8 @@ const PeliculaModal = ({ pelicula, onClose }) => {
                     <strong>Clasificación:</strong>
                   </div>
                   <div className="col-6">
-                    <span className={`badge ${getClasificacionBadgeColor(pelicula.clasificacion)}`}>
-                      {getClasificacion(pelicula.clasificacion)}
+                    <span className={`badge ${obtenerColorInsigniaClasificacion(pelicula.clasificacion)}`}>
+                      {obtenerClasificacion(pelicula.clasificacion)}
                     </span>
                   </div>
                 </div>
@@ -125,18 +124,18 @@ const PeliculaModal = ({ pelicula, onClose }) => {
 };
 
 // Función para determinar el color de la insignia según la clasificación
-const getClasificacionBadgeColor = (clasificacion) => {
+const obtenerColorInsigniaClasificacion = (clasificacion) => {
   switch(clasificacion) {
     case 0: return 'bg-success'; // Siete - Verde
     case 1: return 'bg-info';    // Trece - Azul
-    case 2: return 'bg-warning'; // Dieciseis - Amarillo
+    case 2: return 'bg-warning'; // Dieciséis - Amarillo
     case 3: return 'bg-danger';  // Dieciocho - Rojo
     default: return 'bg-secondary';
   }
 };
 
 // Función para obtener la clasificación de forma segura
-const getClasificacion = (clasificacionId) => {
+const obtenerClasificacion = (clasificacionId) => {
   return clasificaciones[clasificacionId] || 'No especificada';
 };
 
